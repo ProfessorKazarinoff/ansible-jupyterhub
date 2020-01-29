@@ -7,5 +7,9 @@
     digital_ocean_sshkey_info:
       oauth_token: "{{ do_api_token }}"
     register: ssh_keys
+  #- set_fact:
+  #    ssh_key_array: "{{ item.ssh_key_array }}"
+  #  loop: "{{ ssh_keys.data|json_query('id') }}"
 
-  - debug: var=ssh_keys
+  - debug:
+      msg: "One SSH Key ID is: {{ ssh_keys.data[0].id }}"

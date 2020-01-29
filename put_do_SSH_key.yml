@@ -7,7 +7,7 @@
   - name: Add or confirm an SSH key is stored on Digital Ocean
     digital_ocean_sshkey:
       oauth_token: "{{ do_api_token }}"
-      name: "Den Ubuntu Box SSH Key"
+      name: "Ansible Local Host SSH Key"
       ssh_pub_key: "{{ local_ssh_key }}"
       state: present
     register: response

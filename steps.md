@@ -43,6 +43,16 @@ ansible-playbook put_do_SSH_key.yml
 ansible-playbook get_do_account_info.yml
 ```
 
+## Create a new DO server
+
+If the server is already created, need to know the numeric server ID number. Don't know how to find this with ansible. Use that numeric server ID number in the ```create_do_server.yml``` playbook or many servers will be made when you debug the playbook.
+
+Still need to figure out how to aquire an array of numeric SSH key ID's so that all of these keys can be added at runtime.
+
+```
+ansible-playbook create_do_server.yml
+```
+
 ## Get DO SSH Keys
 
 ## Get DO Domain Names
