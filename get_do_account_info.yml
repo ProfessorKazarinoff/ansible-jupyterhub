@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  vars:
+    do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
+  tasks:
+  - name: Get Digital Ocean Account Info
+    digital_ocean_account_info:
+      oauth_token: "{{ do_api_token }}"
+      timeout: 30
+    register: response
+  - debug:
+      var: response['data']

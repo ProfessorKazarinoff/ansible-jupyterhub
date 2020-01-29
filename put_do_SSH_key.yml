@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  vars:
+    local_ssh_key: "{{ lookup('file','~/.ssh/id_rsa.pub') }}"
+    do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
+  tasks:
+  - name: Add or confirm an SSH key is stored on Digital Ocean
+    digital_ocean_sshkey:
+      oauth_token: "{{ do_api_token }}"
+      name: "Den Ubuntu Box SSH Key"
+      ssh_pub_key: "{{ local_ssh_key }}"
+      state: present
+    register: response
+  - debug:
+      var: response['data']
+      #msg: Local SSH key copied to Digital Ocean
+  

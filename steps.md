@@ -11,20 +11,27 @@ pip install -r requirements.txt
 ansible --version
 ```
 
+## Ensure you have a local SSH key
+
+```
+cat ~/.ssh/id_rsa.pub
+# you should see output
+```
+
+if no local SSH key exists:
+```
+ssh-keygen
+# accept default location
+```
+
 ## Aquire DO OAuth Token
 
-Log into Digital Ocean and select API from the left-hand menu. Under Tokens/Keys, generate a new personal access token. Copy the access token and save it in ```~/.do/credentials```
+Sign up for a Digital Ocean account and into Digital Ocean. Select API from the left-hand menu. Under Tokens/Keys, generate a new personal access token. Copy the access token and save it in ```~/.do/do_api_token```
+
+Without quotes, save the text of the api token in ```~/.do/do_api_token``` (no extension). Something like below:
 
 ```
-# ~/.do/credentials
-export DO_API_TOKEN="as345dkjlk245dkjl345a546aklj345k"
-```
-
-Save the ```credentials``` file and source it.
-
-```
-source ~/.do/credentials
-echo $DO_API_TOKEN
+as345dkjlk245dkjl345asad546aklj345
 ```
 
 ## Run test playbooks
@@ -32,6 +39,8 @@ echo $DO_API_TOKEN
 ```
 ansible-playbook get_do_domain_names.yml
 ansible-playbook get_do_SSH_key_info.yml
+ansible-playbook put_do_SSH_key.yml
+ansible-playbook get_do_account_info.yml
 ```
 
 ## Get DO SSH Keys
