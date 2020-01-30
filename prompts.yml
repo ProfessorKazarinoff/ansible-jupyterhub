@@ -60,4 +60,4 @@
 
   - name: Puase to make sure an SSH key is present
     pause:
-      prompt: "Make sure you have an SSH key saved in ~/.ssh/"
+      prompt: "Make sure you have an SSH key saved in ~/.ssh/ [Enter] to move on"
