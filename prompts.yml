@@ -58,6 +58,13 @@
     register: domain_name
     when: domain_name is undefined
 
-  - name: Puase to make sure an SSH key is present
+  - name: Pause to make sure an SSH key is present
     pause:
       prompt: "Make sure you have an SSH key saved in ~/.ssh/ [Enter] to move on"
+
+  - name: Print out the responses
+    debug:
+      msg:
+      - "User name: {{ jh_user_name }}"
+      - "Email address: {{ email_address }}"
+      - "Domain name: {{ domain_name }}"
