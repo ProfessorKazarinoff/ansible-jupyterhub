@@ -49,7 +49,7 @@
       prompt: |
       Enter your email address (needed for SSL cirt)
     register: email_address
-    when: email_address is undefined
+    #when: email_address is undefined
 
   - name: Ask for domin name
     pause: 
