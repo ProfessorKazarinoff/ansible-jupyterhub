@@ -1,0 +1,56 @@
+# prompts.yml
+#
+# An Ansible playbook to ask a user a couple questions before 
+# setting up the JupyterHub server. Answers saved as Ansible facts to be used later
+# 
+# What is your DO API Auth Token (or use env or use saved in file)?
+# What is your non-root sudo user's username (or use default peter)?
+# What is your domain name (mydomain.com)
+# Do you have an SSH key set up locally yet?
+# any extra packages you want to install (defaults include Jupyter, Matplotlib, Pandas, NumPy, xlrd, SymPy, requests)
+# What DO region do you want to use? (Default sfo2)
+# What is your email address (for SSL cirt, an email address is needed)
+#
+---
+- hosts: localhost
+tasks:
+- stat:
+    path: ~/.do/credentials
+  register: result
+
+- name: Enter DO API Token
+  pause:
+    prompt: |
+      Enter your Digital Ocean API Auth Token. The token must have write permissions.
+    echo: true
+  register: do_api_token
+  when:
+    - do_api_token is undefined
+    - lookup('env','DO_API_TOKEN')|length <= 0
+    - lookup('file','~/.do/credentials')|length <= 0
+    - result.stat.exists == false
+
+- name: Ask for non-root sudo user's username
+  pause: 
+    prompt: |
+      Enter your non-root sudo user's name
+  register: jh_user_name
+  when: jh_user_name is undefined
+
+  - name: Ask email address
+    pause: 
+      prompt: |
+      Enter your email address (needed for SSL cirt)
+    register: email_address
+    when: email_address is undefined
+
+  - name: Ask for domin name
+    pause: 
+      prompt: |
+      Enter the domain name you want to use (mydomain.org)
+    register: domain_name
+    when: domain_name is undefined
+
+  - name: Puase to make sure an SSH key is present
+    pause:
+      prompt: "Make sure you have an SSH key saved in ~/.ssh/"
