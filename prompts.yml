@@ -47,14 +47,14 @@
   - name: Ask for email address needed for SSL cirt
     pause: 
       prompt: |
-      Enter your email address (needed for SSL cirt)
+        Enter your email address (needed for SSL cirt)
     register: email_address
-    #when: email_address is undefined
+    when: email_address is undefined
 
   - name: Ask for domin name
     pause: 
       prompt: |
-      Enter the domain name you want to use (mydomain.org)
+        Enter the domain name you want to use (mydomain.org)
     register: domain_name
     when: domain_name is undefined
 
