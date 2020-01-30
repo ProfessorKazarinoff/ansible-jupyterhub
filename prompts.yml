@@ -65,6 +65,6 @@
   - name: Print out the responses
     debug:
       msg:
-      - "User name: {{ jh_user_name }}"
-      - "Email address: {{ email_address }}"
-      - "Domain name: {{ domain_name }}"
+      - "User name: {{ jh_user_name.user_input }}"
+      - "Email address: {{ email_address.user_input }}"
+      - "Domain name: {{ domain_name.user_input }}"
