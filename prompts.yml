@@ -27,8 +27,8 @@
     when:
       - do_api_token is undefined
       - lookup('env','DO_API_TOKEN')|length <= 0
-      - lookup('file','~/.do/credentials')|length <= 0
-      - result.stat.exists == false
+      #- lookup('file','~/.do/credentials')|length <= 0
+      #- result.stat.exists == false
 
   - name: Ask for non-root sudo user's username
     pause: 
