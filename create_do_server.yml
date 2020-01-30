@@ -20,6 +20,11 @@
   - debug:
       msg: "New Droplet - ID of droplet is {{ my_new_droplet.data.droplet.id }}, IP is {{ my_new_droplet.data.droplet.networks.v4[0].ip_address }}"
 
+  - name: Save DO Droplet IP address to Ansible fact variable
+    set_fact:
+      do_server_ip: "{{ my_new_droplet.data.droplet.networks.v4[0].ip_address }}"
+      do_server_id: "{{ my_new_droplet.data.droplet.id }}"
+
   - name: Ensure the droplet is present
     digital_ocean_droplet:
       state: present
