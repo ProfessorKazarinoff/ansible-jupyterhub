@@ -9,6 +9,7 @@
 - import_playbook: get_do_SSH_key_info.yml
 - import_playbook: put_do_SSH_key.yml
 - import_playbook: create_do_server.yml
+- import_playbook: add_do_server_to_group.yml
 #- import_playbook: initial_server_setup.yml
 #- import_playbook: install_miniconda.yml
 #- import_playbook: install_jupyterhub.yml

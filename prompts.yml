@@ -13,31 +13,38 @@
 #
 ---
 - hosts: localhost
-tasks:
-- stat:
-    path: ~/.do/credentials
-  register: result
+  tasks:
+  - stat:
+      path: ~/.do/credentials
+    register: result
 
-- name: Enter DO API Token
-  pause:
-    prompt: |
-      Enter your Digital Ocean API Auth Token. The token must have write permissions.
-    echo: true
-  register: do_api_token
-  when:
-    - do_api_token is undefined
-    - lookup('env','DO_API_TOKEN')|length <= 0
-    - lookup('file','~/.do/credentials')|length <= 0
-    - result.stat.exists == false
+  - name: Enter DO API Token
+    pause:
+      prompt: |
+        Enter your Digital Ocean API Auth Token. The token must have write permissions.
+      echo: true
+    register: do_api_token
+    when:
+      - do_api_token is undefined
+      - lookup('env','DO_API_TOKEN')|length <= 0
+      - lookup('file','~/.do/credentials')|length <= 0
+      - result.stat.exists == false
 
-- name: Ask for non-root sudo user's username
-  pause: 
-    prompt: |
-      Enter your non-root sudo user's name
-  register: jh_user_name
-  when: jh_user_name is undefined
+  - name: Ask for non-root sudo user's username
+    pause: 
+      prompt: |
+        Enter your non-root sudo user's name
+    register: jh_user_name
+    when: jh_user_name is undefined
 
-  - name: Ask email address
+  - name: Ask for non-root sudo user's password
+    pause: 
+      prompt: |
+        Enter your non-root sudo user's password
+    register: jh_user_pwd
+    when: jh_user_pwd is undefined
+
+  - name: Ask for email address needed for SSL cirt
     pause: 
       prompt: |
       Enter your email address (needed for SSL cirt)

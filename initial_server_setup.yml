@@ -1,0 +1,60 @@
+---
+- name: Create non-root sudo user, move SSH keys, ufw firewall playbook
+- hosts: jhservers
+  remote_user: root
+  gather_facts: false
+  vars:
+    create_user: "{{ jh_user_name }}"
+    copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+    sys_packages: ['curl','vim', 'git', 'ufw','wget','whois']
+  #vars_files:
+  #  - vars.yml
+
+  tasks:
+    - name: Create a new regular user with sudo privileges
+      user:
+        name: "{{ create_user }}"
+        state: present
+        append: true
+        create_home: true
+        password: "{{ password_hash }}"
+        shell: /bin/bash
+
+    - name: add user to the sudoers file
+      command: usermod -aG sudo peter
+      
+    - name: Make sure we have a 'peter' group
+      group:
+        name: peter
+        state: present
+
+    - name: Copy SSH keys from root to sudo user
+      command: rsync --archive --chown={{ create_user  }}:{{ create_user }} ~/.ssh /home/{{ create_user }}
+      become: yes
+
+    - name: Disable password authentication for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+
+    - name: sudo apt update && sudo apt upgrade 
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #one day
+
+    - name: Install required system packages
+      apt: name={{ sys_packages }} state=latest
+
+    - name: UFW - Allow SSH connections
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: UFW - Deny all other incoming traffic by default
+      ufw:
+        state: enabled
+        policy: deny
+        direction: incoming

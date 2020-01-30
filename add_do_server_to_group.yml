@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Add DO server to host group
+      add_host:
+        name: "{{ do_server_ip }}"
+        group: jhservers
+        id: "{{ do_server_id }}"
