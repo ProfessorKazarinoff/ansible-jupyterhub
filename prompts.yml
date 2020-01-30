@@ -36,6 +36,8 @@
         Enter your non-root sudo user's name
     register: jh_user_name
     when: jh_user_name is undefined
+  - set_fact:
+      user_name: "{{ jh_user_name.user_input }}"
 
   - name: Ask for non-root sudo user's password
     pause: 
@@ -65,6 +67,6 @@
   - name: Print out the responses
     debug:
       msg:
-      - "User name: {{ jh_user_name.user_input }}"
+      - "User name: {{ user_name }}"
       - "Email address: {{ email_address.user_input }}"
       - "Domain name: {{ domain_name.user_input }}"
