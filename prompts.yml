@@ -52,13 +52,17 @@
         Enter your email address (needed for SSL cirt)
     register: email_address
     when: email_address is undefined
+  - set_fact:
+      ssl_email_address: "{{ email_address.user_input }}"
 
   - name: Ask for domin name
     pause: 
       prompt: |
         Enter the domain name you want to use (mydomain.org)
-    register: domain_name
-    when: domain_name is undefined
+    register: DNS
+    when: DNS is undefined
+  - set_fact:
+      domain_name: "{{ DNS.user_input }}"
 
   - name: Pause to make sure an SSH key is present
     pause:
@@ -68,5 +72,5 @@
     debug:
       msg:
       - "User name: {{ user_name }}"
-      - "Email address: {{ email_address.user_input }}"
-      - "Domain name: {{ domain_name.user_input }}"
+      - "Email address: {{ ssl_email_address }}"
+      - "Domain name: {{ domain_name }}"
