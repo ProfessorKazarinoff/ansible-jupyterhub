@@ -1,0 +1,45 @@
+# install_miniconda.yml
+# see installer list: https://repo.anaconda.com/miniconda/
+# see checksum list:https://conda.io/en/latest/miniconda_hashes.html
+# Thanks to aksakalli for :https://gist.github.com/aksakalli/72d54b22ce4da2ee81eb1a58cbc67a0c
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+
+  tasks:
+    - name: Download Miniconda
+      get_url:
+        url: https://repo.continuum.io/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh
+        dest: /tmp/install-miniconda.sh
+        checksum: sha256:8a324adcc9eaf1c09e22a992bb6234d91a94146840ee6b11c114ecadafc68121
+        mode: 0550
+    - name: Create miniconda3 directory
+      become: True
+      file:
+        path: /opt/miniconda3
+        state: directory
+        owner: "{{ user_name }}"
+        mode: 755
+        recurse: yes
+    - name: Run the Miniconda installer
+      shell: /tmp/install-miniconda.sh -b -u -p /opt/miniconda3
+    - name: Remove the installer
+      file:
+        state: absent
+        path: /tmp/install-miniconda.sh
+    - name: Add conda bin to path
+      become: True
+      shell: echo 'export PATH=/opt/miniconda3/bin:$PATH' >> /etc/profile
+    - name: conda - read permission for all
+      become: True
+      file:
+        path: /opt/miniconda3
+        mode: +r
+        recurse: yes
+    - name: conda - execution permission for all
+      become: True
+      file:
+        path: /opt/miniconda3/bin
+        mode: +x
+        recurse: yes

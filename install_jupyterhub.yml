@@ -1,0 +1,32 @@
+# install_jupyterhub.yml
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+
+  tasks:
+    - name: create /opt/miniconda3/env/jupterhub
+      file:
+        path: /opt/miniconda/envs/jupyterhub
+        mode: 0550
+        recurse: yes
+        state: directory
+        group: peter
+      become: yes
+
+    - name: Create conda env jupyterhub
+      shell: /opt/miniconda3/bin/conda create -y --prefix /opt/miniconda3/envs/jupyterhub
+      become: yes
+
+    - name: Install NumPy Matplotlib Pandas Jupyter xlrd SymPy
+      shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub numpy matplotlib pandas jupyter xlrd sympy
+
+    - name: Install JupyterHub and JupyterLab
+      shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub -c conda-forge jupyterhub jupyterlab
+
+    - name: jupyterhub env - read permission for all
+      file:
+        path: /opt/miniconda3/envs/jupyterhub
+        mode: +r
+        recurse: yes
+      become: yes
