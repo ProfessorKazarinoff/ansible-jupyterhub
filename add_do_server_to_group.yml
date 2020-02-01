@@ -1,8 +1,9 @@
 ---
 - hosts: localhost
+  gather_facts: true
   tasks:
-    - name: Add DO server to host group
-      add_host:
-        name: "{{ do_server_ip }}"
-        group: jhservers
-        id: "{{ do_server_id }}"
+  - name: Add host to group jh_servers
+    add_host:
+      name: '{{ do_droplet_ip }}'
+      groups: jh_servers
+# need to create an invintory file and add jh_server ip to var file

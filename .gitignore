@@ -363,3 +363,5 @@ dmypy.json
 hosts
 venv/
 venv
+
+vars/local.yml

@@ -2,14 +2,29 @@
 - hosts: localhost
   vars:
     do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
+    ssh_key_array: []
   tasks:
   - name: Gather information about Digital Ocean SSH Keys
     digital_ocean_sshkey_info:
       oauth_token: "{{ do_api_token }}"
     register: ssh_keys
-  #- set_fact:
-  #    ssh_key_array: "{{ item.ssh_key_array }}"
-  #  loop: "{{ ssh_keys.data|json_query('id') }}"
 
   - debug:
-      msg: "One SSH Key ID is: {{ ssh_keys.data[0].id }}"
+      msg: "{{ item.id }}"
+    vars:
+      nested_list:
+        - - one
+          - two
+          - three
+    with_items:
+      - "{{ ssh_keys.data }}"
+  
+  - name: Add numeric ssh key id to array
+    set_fact:
+      ssh_key_array: "{{ ssh_key_array }} + [ {{ item.id | int }} ]"
+    with_items:
+      - "{{ ssh_keys.data }}"
+  
+  - name: Print out the ssh key id array to the console
+    debug: 
+      var: ssh_key_array

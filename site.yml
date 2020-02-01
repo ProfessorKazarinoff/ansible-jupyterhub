@@ -4,13 +4,13 @@
 # $ ansible-playbook site.yml
 
 #- import_playbook: prompts.yml
-- import_playbook: get_do_account_info.yml
-- import_playbook: get_do_domain_names.yml
-- import_playbook: get_do_SSH_key_info.yml
+#- import_playbook: get_do_account_info.yml
+#- import_playbook: get_do_domain_names.yml
 - import_playbook: put_do_SSH_key.yml
+- import_playbook: get_do_SSH_key_info.yml
 - import_playbook: create_do_server.yml
 - import_playbook: add_do_server_to_group.yml
-#- import_playbook: initial_server_setup.yml
+- import_playbook: set_up_ubuntu_1804.yml
 #- import_playbook: install_miniconda.yml
 #- import_playbook: install_jupyterhub.yml
 #- import_playbook: ssl_cirt.yml

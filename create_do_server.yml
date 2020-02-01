@@ -8,34 +8,44 @@
     digital_ocean_droplet:
       state: present
       id: "{{ do_droplet_id }}"
-      name: ansible-droplet
+      name: ansible-jh-server
       oauth_token: "{{ do_api_token }}"
-      #ssh_keys: [array of SSH key(numeric) ID to add to server]
+      ssh_keys: "{{ ssh_key_array }}"
       size: 1gb
       region: sfo2
       image: ubuntu-18-04-x64
       wait_timeout: 500
-    register: my_new_droplet
-
-  - debug:
-      msg: "New Droplet - ID of droplet is {{ my_new_droplet.data.droplet.id }}, IP is {{ my_new_droplet.data.droplet.networks.v4[0].ip_address }}"
-
-  - name: Save DO Droplet IP address to Ansible fact variable
-    set_fact:
-      do_server_ip: "{{ my_new_droplet.data.droplet.networks.v4[0].ip_address }}"
-      do_server_id: "{{ my_new_droplet.data.droplet.id }}"
-
-  - name: Ensure the droplet is present
-    digital_ocean_droplet:
-      state: present
-      id: "{{ do_droplet_id }}"
-      name: ansible_droplet
-      oauth_token: "{{ do_api_token }}"
-      size: 1gb
-      region: sfo2
-      image: ubuntu-18-04-x64
-      wait_timeout: 500
+      unique_name: yes
     register: my_droplet
 
   - debug:
-      msg: "ID of droplet is {{ my_droplet.data.droplet.id }}, IP is {{ my_droplet.data.droplet.networks.v4[0].ip_address }}"
+      msg: "New Droplet - ID of droplet is {{ my_droplet.data.droplet.id }}, IP is {{ my_droplet.data.droplet.networks.v4[0].ip_address }}"
+
+  - name: Save DO Droplet IP address to Ansible fact variable
+    set_fact:
+      do_droplet_ip: "{{ my_droplet.data.droplet.networks.v4[0].ip_address }}"
+      do_droplet_id: "{{ my_droplet.data.droplet.id }}"
+
+## Need to put in a little wait here for server to fully start up.
+## Maybe just 5 or 10 seconds
+
+
+#  - name: Ensure the droplet is present
+#    digital_ocean_droplet:
+#      state: present
+#      id: "{{ do_droplet_id }}"
+ #     name: ansible-droplet
+#      oauth_token: "{{ do_api_token }}"
+#      size: 1gb
+#      region: sfo2
+#      image: ubuntu-18-04-x64
+#     wait_timeout: 500
+ #   register: my_droplet
+
+ # - debug:
+  #    msg: "ID of droplet is {{ my_droplet.data.droplet.id }}, IP is {{ my_droplet.data.droplet.networks.v4[0].ip_address }}"
+  #- set_fact:
+  #    do_droplet_ip: "{{ my_droplet.data.droplet.networks.v4[0].ip_address }}"
+  - name: Ensure do_droplet_ip variable is saved as an Ansible fact
+    debug:
+      var: do_droplet_ip

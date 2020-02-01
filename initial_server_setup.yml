@@ -2,7 +2,7 @@
 - name: Create non-root sudo user, move SSH keys, ufw firewall playbook
 - hosts: jhservers
   remote_user: root
-  gather_facts: false
+  gather_facts: true
   vars:
     create_user: "{{ jh_user_name }}"
     copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"

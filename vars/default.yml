@@ -1,0 +1,8 @@
+# vars/local.yml
+# make sure this is added to .gitignore
+---
+user_name: peter
+local_SSH_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+sys_packages: ['curl', 'vim', 'git', 'ufw','wget']
+#these are garbage values
+ssh_key_array: [12321,231564,4545864,9865615] 
