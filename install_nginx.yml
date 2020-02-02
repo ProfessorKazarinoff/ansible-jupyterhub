@@ -1,0 +1,22 @@
+# install_nginx.yml
+# An Ansible Playbook to install and run nginx on a Digital Ocean Droplet
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  tasks:
+    - name: sudo apt update && sudo apt upgrade 
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #one day
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+    
+    - name: Make sure Nginx is running
+      systemd:
+        state: started
+        name: nginx

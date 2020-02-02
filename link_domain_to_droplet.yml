@@ -1,0 +1,20 @@
+# link_domain_to_droplet.yml
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars:
+    do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
+  vars_files:
+    - vars/host.yml
+
+  tasks:
+    - name: Associate Domain saved on Digital Ocean with IP address of DO Droplet
+      digital_ocean_domain:
+        state: present
+        name: "{{ domain_name }}"
+        ip: "{{ do_server_ip }}"
+        api_token: "{{ do_api_token }}"
+    - name: Print out DO droplet ip address
+      debug:
+        msg: "{{ do_server_ip }} linked to {{ domain_name }}"

@@ -365,3 +365,4 @@ venv/
 venv
 
 vars/local.yml
+vars/host.yml

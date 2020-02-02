@@ -7,3 +7,6 @@
       name: '{{ do_droplet_ip }}'
       groups: jh_servers
 # need to create an invintory file and add jh_server ip to var file
+#  - name: Set the Digital Ocean IP address as a fact
+#    set_fact:
+#      do_droplet_ip: '{{ do_droplet_ip }}'

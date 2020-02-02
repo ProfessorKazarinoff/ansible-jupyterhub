@@ -17,52 +17,73 @@
     letsencrypt_csrs_dir: /etc/letsencrypt/csrs
     letsencrypt_certs_dir: /etc/letsencrypt/certs
     letsencrypt_account_key: /etc/letsencrypt/account/account.key
-    domain_name: engr101lab.org
+    #domain_name: engr101lab.org
+    #email: peter.kazarinoff@pcc.edu
+  vars_files:
+    - vars/host.yml
+    # domain_name: mydomain.org
+    # email: my.email@email.org
 
   tasks:
-    - name: "Create required directories in /etc/letsencrypt"
-      file:
-        path: "/etc/letsencrypt/{{ item }}"
-        state: directory
-        owner: root
-        group: root
-        mode: u=rwx,g=x,o=x
-      with_items:
-      - account
-      - certs
-      - csrs
-      - keys
-    - name: check if the Let's Encrypt account key has already been created
-      stat:
-        path: "{{ letsencrypt_account_key }}"
-      register: account_key_result
-    - name: "Generate a Let's Encrypt account key"
-      #shell: "if [ ! -f {{ letsencrypt_account_key }} ]; then openssl genrsa 4096 | sudo tee {{ letsencrypt_account_key }}; fi"
-      shell: "openssl genrsa 4096 | sudo tee {{ letsencrypt_account_key }}"
-      become: yes
-      when: account_key_result.stat.exists == False
-    
-#    - name: check if Let's Encrypt private key exists
-#      stat:
-#        path: "{{ letsencrypt_secret_key }}"
-#      register: private_key_result
-#    - name: "Generate Let's Encrypt private key"
-#      shell: "openssl genrsa 4096 | sudo tee /etc/letsencrypt/keys/{{ domain_name }}.key"
-#      become: yes
-#      when: private_key_result.stat.exists == False
-#
-#    - name: check if Let's Encrypt CSR key exists
-#      stat:
-#        path: "/etc/letsencrypt/keys/{{ domain_name }}.key"
-#      register: CSR_result
-#    - name: touch CSR key file
-#      file:
-#        path: '/etc/letsencrypt/keys/{{ domain_name }}.key'
-#        state: touch
-#      when: CSR_result.stat.exists == False
-#    - name: "Generate Let's Encrypt CSR"
-#      shell: "openssl req -new -sha256 -key /etc/letsencrypt/keys/{{ domain_name }}.key"
-#      when: CSR_result.stat.exists == False
-#      args:
-#        executable: /bin/bash
-#     
+    - name: Ensure Nginx is running, because we need to get a response from the server
+      systemd:
+        name: nginx
+        state: started
+    - name: Run sudo apt-get update
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install software-properties-common
+      apt:
+        name: software-properties-common
+    - name: Add the universe apt repositotry
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      loop:
+        - "deb http://archive.ubuntu.com/ubuntu/ bionic universe"
+        - "deb http://archive.ubuntu.com/ubuntu/ bionic-updates universe"
+        - "deb http://security.ubuntu.com/ubuntu/ bionic-security universe"
+    - name: add apt repository ppa:certbot/certbot
+      apt_repository:
+        repo: ppa:certbot/certbot
+        state: present
+    - name: Update apt
+      apt:
+        update_cache: yes
+    - name: apt install certbot
+      apt:
+        name: certbot
+        state: present
+    - name: apt install python-certbot-nginx
+      apt:
+        name: python-certbot-nginx
+        state: present
+    - name: Open port 80 so that certbot can do its work
+      ufw:
+        rule: allow
+        port: '80'
+    - name: Run certbot on the domain name using provided email address
+      shell: "certbot certonly -d {{ domain_name }} --nginx -n --agree-tos -m {{ email }}"
+      args:
+        executable: /bin/bash
+      become: true
+      register: certbot_stdout
+      # "IMPORTANT NOTES:",
+      #      " - Congratulations! Your certificate and chain have been saved at:",
+      #      "   /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem",
+      #      "   Your key file has been saved at:",
+      #      "   /etc/letsencrypt/live/{{ domain_name }}/privkey.pem",
+      #      "   Your cert will expire on 2020-05-01. 
+    - name: print out the certbot output
+      debug:
+        var: certbot_stdout.stdout_lines
+
+    - name: put certbot stdoutlines into a fact
+      set_fact:
+        certbot_stdout_lines_array: "{{ certbot_stdout.stdout_lines }}"
+
+    - name: Close port 80 because cirtbot is done with its work
+      ufw:
+        rule: deny
+        port: '80'
