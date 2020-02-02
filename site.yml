@@ -3,7 +3,7 @@
 # to run:
 # (venv)$ ansible-playbook site.yml
 
-#- import_playbook: prompts.yml  ## ask for username, domain name, email
+#- import_playbook: prompts.yml  ## ask for username, domain name, email copy them to vars/user.yml
 #- import_playbook: get_do_domain_names.yml   ## ensure your domain name is registered with Digital Ocean
 - import_playbook: put_do_SSH_key.yml
 - import_playbook: get_do_SSH_key_info.yml
@@ -16,7 +16,7 @@
 - import_playbook: link_domain_to_droplet.yml
 ### Need to wait a little bit for the DNS changeover to happen  ###
 - import_playbook: ssl_cirt.yml
-#- import_playbook: cookie_secret_and_proxy_auth_token.yml
+- import_playbook: cookie_secret_and_proxy_auth_token.yml
 #- import_playbook: nginx_config.yml
 #- import_playbook: jupyterhub_config.yml
 #- import_playbook: system_service.yml
