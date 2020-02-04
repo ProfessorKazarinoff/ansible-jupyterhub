@@ -366,3 +366,5 @@ venv
 
 vars/local.yml
 vars/host.yml
+
+vault/local_vault.yml

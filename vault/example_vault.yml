@@ -1,0 +1,3 @@
+# save as local_vault.yml
+# make sure local_vault.yml is out of source control
+my_password: myPlaintextPassword

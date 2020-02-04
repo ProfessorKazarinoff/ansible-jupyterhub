@@ -1,0 +1,15 @@
+# create a new user so that we have someone to log into Jupyterhub with
+---
+- name: Create new user to test jupyterhub
+  hosts: jh_servers
+  become: true
+  gather_facts: false
+  vars_files:
+    - vault/local_vault.yml
+  tasks:
+    - name: Create Users
+      user:
+        name: jupyterhub
+        password: "{{ my_password | password_hash('sha512') }}"
+        shell: /bin/bash
+        update_password: on_create

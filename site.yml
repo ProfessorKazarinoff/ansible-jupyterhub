@@ -19,8 +19,10 @@
 #- import_playbook: cookie_secret_and_proxy_auth_token.yml
 #- import_playbook: nginx_config.yml
 #- import_playbook: jupyterhub_config.yml
+#- import_playbook: create_test_users.yml
 - import_playbook: system_service.yml
 ## had to add a user gabby with a password manually and add the user to the config
+## create_test_users.yml playbook should create a new user called jupyterhub
 ### Should stop here and make sure everything works
 #- import_playbook: google_oath.yml
 #- import_playbook: custom_login_page.yml
