@@ -1,0 +1,28 @@
+# jupyterhub_config.yml
+# An Ansible playbook to build create an simple Jupyterhub Config
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    # user_name: myusername
+
+  tasks:
+    - name: Create the /etc/jupyterhub directory
+      file:
+        path: /etc/jupyterhub
+        state: directory
+        owner: root
+        group: "{{ user_name }}"
+        mode: '0770'
+    - name: Template a file to /etc/jupyterhub/jupyterhub_config.py
+      template:
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/jupyterhub_config_simple.j2
+        dest: /etc/jupyterhub/jupyterhub_config.py
+        owner: root
+        group: "{{ user_name }}"
+        mode: '0770'
+      become: yes
+    

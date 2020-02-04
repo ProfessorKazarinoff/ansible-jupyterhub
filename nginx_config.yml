@@ -1,0 +1,41 @@
+# nginx_config.yml
+# 
+# An Ansible playbook to build an Nginx config
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    # domain_name: mydomain.org
+
+  tasks:
+    - name: Template a file to /etc/nginx/nginx.conf
+      template:
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/nginx_conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: wheel
+        mode: '0644'
+      become: yes
+    - name: Template a file to /etc/nginx/sites-available
+      template:
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/sites-available.j2
+        dest: /etc/nginx/sites-available/jupyterhub
+        owner: root
+        group: wheel
+        mode: '0644'
+      become: yes
+
+    - name: create symlink from site-available to sites-enabled
+      file:
+        src: /etc/nginx/sites-available/jupyterhub
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+      become: yes
+    - name: Make sure Nginx is running
+      systemd:
+        state: restarted
+        name: nginx

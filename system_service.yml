@@ -1,0 +1,29 @@
+# system_service.yml
+# 
+# An Ansible playbook to build an system service and
+# run juypyterhub as a system service.
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    # domain_name: mydomain.org
+
+  tasks:
+    - name: Template a file to /etc/systemd/system/jupyterhub.service
+      template:
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/jupyterhub.service.j2
+        dest: /etc/systemd/system/jupyterhub.service
+        owner: root
+        group: sudo
+        mode: '0644'
+      become: yes
+    - name: just force systemd to reread configs (2.4 and above)
+      systemd:
+        daemon_reload: yes
+    - name: Start/Make sure the jupyterhub systemd service is running
+      systemd:
+        state: started
+        name: jupyterhub
