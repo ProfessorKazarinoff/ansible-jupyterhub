@@ -1,0 +1,29 @@
+# jupyterhub_setup3.yml
+# master Ansible playbook that runs all of the other playbooks
+# to run:
+# (venv)$ ansible-playbook jupyterhub_setup3.yml
+
+#- import_playbook: prompts.yml  ## ask for username, domain name, email copy them to vars/user.yml
+#- import_playbook: get_do_domain_names.yml   ## ensure your domain name is registered with Digital Ocean
+#- import_playbook: put_do_SSH_key.yml
+#- import_playbook: get_do_SSH_key_info.yml
+#- import_playbook: create_do_server.yml
+#- import_playbook: add_do_server_to_group.yml
+#- import_playbook: set_up_ubuntu_1804.yml
+#- import_playbook: install_miniconda.yml
+#- import_playbook: install_jupyterhub.yml
+#- import_playbook: install_nginx.yml
+#- import_playbook: link_domain_to_droplet.yml
+### Need to wait a little bit for the DNS changeover to happen  ###
+- import_playbook: ssl_cirt.yml
+- import_playbook: cookie_secret_and_proxy_auth_token.yml
+- import_playbook: nginx_config.yml
+- import_playbook: jupyterhub_config.yml
+- import_playbook: create_test_users.yml
+- import_playbook: system_service.yml
+## had to add a user gabby with a password manually and add the user to the config
+## create_test_users.yml playbook should create a new user called jupyterhub
+### Should stop here and make sure everything works
+#- import_playbook: google_oath.yml
+#- import_playbook: custom_login_page.yml
+#- import_playbook: cull_idle_servers.yml

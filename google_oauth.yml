@@ -1,0 +1,44 @@
+# google_oauth.yml
+# an Ansible playbook to incorporate Google Authentication
+# into Jupyterhub
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/college.yml
+    # my_college_name: My College Name
+    # my_college_domain: mycollege.edu
+    # my_college_username: first.last
+
+  tasks:
+    - name: Move the google_oauth_credentials.json file to the server
+      copy:
+        src: /home/peter/ansible/vault/google_oauth_credentials.json
+        dest: /etc/jupyterhub
+        owner: root
+        group: sudo
+        mode: '0770'
+    - name: Template a file to /etc/jupyterhub/college_id.json
+      template:
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/college_id.json.j2
+        dest: /etc/jupyterhub/college_id.json
+        owner: root
+        group: "{{ user_name }}"
+        mode: '0770'
+      become: yes
+    - name: pip install oauthenticator
+      # somehow pip needs to install oauthenticator in the jupyter conda env
+      # maybe /path/to/conda/env/python -m pip install oauthenticator?
+    - name: Copy over the new jupyterhub_config.py as a template  
+      template:
+        # need to make this a relative path source
+        # need to make this a relative path source
+        src: /home/peter/ansible/templates/jupyterhub_config_google_oauth.j2
+        dest: /etc/jupyterhub/jupyterhub_config.py
+        owner: root
+        group: "{{ user_name }}"
+        mode: '0770'
+      become: yes
+  

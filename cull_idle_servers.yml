@@ -1,0 +1,3 @@
+# cull_idle_servers.yml
+# An Ansible playbook to add functionality that
+# culls servers from jupyterhub that are idle

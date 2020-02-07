@@ -13,5 +13,11 @@ user_name: peter
 do_server_ip: 3435.XXX.1X.14X1
 domain_name: mydomain.org
 email: my.email@college.edu
-do_droplet_id: 17XXX694X
+do_droplet_id: 17XXXX94
 sys_packages: ['curl', 'vim', 'git', 'ufw','wget']
+
+# in vars/college.yml
+# make sure to add this to .gitignore
+my_college_domain: mycollege.edu
+my_college_name: My College Name
+my_college_username: first.last

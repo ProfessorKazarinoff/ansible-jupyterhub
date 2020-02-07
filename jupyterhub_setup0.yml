@@ -1,0 +1,12 @@
+# jupyterhub_setup0.yml
+# An ansible script to make sure that everything is 
+# Set up and ready to run Ansible to set up jupyterhub
+
+# Confirm vars/host.yml is present
+# print out the variables 
+# Confirm ~/.do/credentials is present and works
+
+#- import_playbook: prompts.yml  ## ask for username, domain name, email copy them to vars/user.yml
+- import_playbook: get_do_domain_names.yml   ## ensure your domain name is registered with Digital Ocean
+- import_playbook: put_do_SSH_key.yml
+- import_playbook: get_do_SSH_key_info.yml

@@ -2,10 +2,10 @@
 
 ## Set up Ansible to run on local machine (MacOS or Linux)
 
-```
+```text
 git clone https://github.com/ProfessorKazarinoff/ansible-jupyterhub.git
 cd ansible-jupyterhub
-python -m venv venv
+python -m venv venv    # use python 3.6+
 source venv/bin/activate
 pip install -r requirements.txt
 ansible --version
@@ -13,70 +13,69 @@ ansible --version
 
 ## Ensure you have a local SSH key
 
-```
+```text
 cat ~/.ssh/id_rsa.pub
 # you should see output
 ```
 
 if no local SSH key exists:
-```
+
+```text
 ssh-keygen
 # accept default location
+cat ~/.ssh/id_rsa.pub
 ```
 
 ## Aquire DO OAuth Token
 
-Sign up for a Digital Ocean account and into Digital Ocean. Select API from the left-hand menu. Under Tokens/Keys, generate a new personal access token. Copy the access token and save it in ```~/.do/do_api_token```
+Sign up for a Digital Ocean account and sign into Digital Ocean. Select API from the left-hand menu. Under Tokens/Keys, generate a new personal access token. Copy the access token and save it in ```~/.do/do_api_token```
 
 Without quotes, save the text of the api token in ```~/.do/do_api_token``` (no extension). Something like below:
 
-```
+```text
 as345dkjlk245dkjl345asad546aklj345
 ```
 
 ## Run test playbooks
 
-```
-ansible-playbook get_do_domain_names.yml
-ansible-playbook get_do_SSH_key_info.yml
-ansible-playbook put_do_SSH_key.yml
-ansible-playbook get_do_account_info.yml
-```
+Run the test playbooks to make sure the Digital Ocean oauth token works.
 
-## Create a new DO server
-
-If the server is already created, need to know the numeric server ID number. Don't know how to find this with ansible. Use that numeric server ID number in the ```create_do_server.yml``` playbook or many servers will be made when you debug the playbook.
-
-Still need to figure out how to aquire an array of numeric SSH key ID's so that all of these keys can be added at runtime.
-
-```
-ansible-playbook create_do_server.yml
+```text
+ansible-playbook jupyterhub_setup0.yml
 ```
 
-## Get DO SSH Keys
+All of the variables you saved should be printed out and the location of the Digital Ocean Oauth Key should be shown.
 
-## Get DO Domain Names
+## Fill in variables in vars/local.yml and vars/host.yml
 
-## Create new DO server with SSH Keys
+The ```vars/default.yml``` file can be copied and saved as ```vars/local.yml``` and ```vars/host.yml```. Values in the vars are needed to set up the playbooks.
 
-## Link Domain Name to DO Server
+## Run the first set of Ansible playbooks to set up the server, install Jupyterhub, and get up to SSL cirts.
 
-## Auto populate ansible invintory with new DO server
+```text
+ansible-playbook jupyterhub_setup1.yml
+```
 
-## Create non-root sudo user with password
+After this playbook runs, the server should be setup, but it may take time for the domain name to switch over. This may take a 5 minutes or 30 minutes. You should see the server IP address and ID number. Add the IP address to ```hosts``` under the header ```[jh_servers]```.
 
-## install miniconda
+## Run the second set of Ansible playbooks to get an SSL cirtficut and configure nginx
 
-## create virtual env install jupyterhub
+```text
+ansible-playbook jupyterhub_setup2.yml
+```
 
-## Install Nginx
+After this is done, log into the server with the name jupyterhub and the password included in vars/host.yml. Make sure that PAM login works and notebooks can be run.
 
-## Nginx Config
+## Get Google Auth Credentials
 
-## JupyterHub systemd
+Go through the process of getting a google_oauth_credentials.json file from developers.google.com. I couldn't figure out a way to automate this step. Save the credentials.json file in vault/google_oauth_credentials.json
 
-## JupyterHub config
+## Run the next set of Ansible Playbooks
 
-## Google OAuth
+```text
+ansible-playbook jupyterhub_setup3.yml
+```
+ 
+## Yeah! Now jupyterhub should be set up.
 
-## Run JuyterHub
+Sure there is work left to be done to build out the Ansible playbooks in a more logical way. They could be broken into roles and better organized. That will have to be the next deployment.
