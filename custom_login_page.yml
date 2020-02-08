@@ -1,2 +1,32 @@
 # custom_login.yml
 # An Ansible playbook to add a custom login page on Jupyterhub
+# An Ansible playbook to build an system service and
+# run juypyterhub as a system service.
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    # domain_name: mydomain.org
+
+  tasks:
+    - name: create the /etc/jupypterhub/templates direcotry
+      file:
+        path: /etc/jupyterhub/templates/
+        state: directory
+        owner: root
+        group: sudo
+        mode: '0644'
+        
+    - name: copy the templates directory into /ect/jpyterhub/template
+      copy:
+        # need to make this a relative path source
+        src: /opt/miniconda3/envs/jupyterhub/share/jupyterhub/templates/
+        dest: /etc/jupyterhub/templates/
+        owner: root
+        remote_src: yes
+        group: sudo
+        mode: '0644'
+      become: yes
+    
