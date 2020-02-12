@@ -100,7 +100,7 @@ That should be the google credentails taken care of
 
 Next make sure that ```vars/college.yml``` is filled out. 
 
-
+The ```hosts``` file also needs to have the server IP listed in it.
 
 ## Run the next set of Ansible Playbooks
 

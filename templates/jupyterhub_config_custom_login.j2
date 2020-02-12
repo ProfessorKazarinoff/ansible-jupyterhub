@@ -1,0 +1,53 @@
+# /etc/jupyterhub/jupyterhub_config.py
+
+# used to read the json google oauth config file
+import json
+
+# For Google OAuth
+from oauthenticator.google import LocalGoogleOAuthenticator   # $ pip install oauthenticator
+
+
+c = get_config()
+
+c.JupyterHub.log_level = 10
+c.Spawner.cmd = '/opt/miniconda3/envs/jupyterhub/bin/jupyterhub-singleuser'
+
+# Cookie Secret Files
+c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_cookie_secret'
+c.ConfigurableHTTPProxy.auth_token = '/srv/jupyterhub/proxy_auth_token'
+
+# Google OAuth Login
+c.JupyterHub.authenticator_class = LocalGoogleOAuthenticator
+
+with open('/etc/jupyterhub/google_oauth_credentials.json') as f:
+    google_oauth = json.load(f)
+c.LocalGoogleOAuthenticator.client_id = google_oauth['web']['client_id']
+c.LocalGoogleOAuthenticator.client_secret = google_oauth['web']['client_secret']
+
+c.LocalGoogleOAuthenticator.oauth_callback_url = google_oauth["web"]["redirect_uris"][0]
+c.LocalGoogleOAuthenticator.create_system_users = True
+c.Authenticator.add_user_cmd = ['adduser', '-q', '--gecos', '""', '--disabled-password', '--force-badname']
+with open('/etc/jupyterhub/college_id.json') as f:
+    college_id = json.load(f)
+c.LocalGoogleOAuthenticator.hosted_domain = [college_id['domain']]   # replace with mycollege.edu, must be a list of strings
+c.LocalGoogleOAuthenticator.login_service = college_id['name']  # replace with 'My College Name'
+
+# sets a custom html template at the login screen.
+c.JupyterHub.template_paths = ['/etc/jupyterhub/templates/']
+
+## Extra Configuration
+
+# Maximum number of concurrent servers that can be active at a time
+c.JupyterHub.active_server_limit = 26
+
+# Maximum number of concurrent users that can be spawning at a time
+c.JupyterHub.concurrent_spawn_limit = 13
+
+# Whether to shutdown the proxy when the Hub shuts down.
+c.JupyterHub.cleanup_proxy = True
+
+# Whether to shutdown single-user servers when the Hub shuts down.
+c.JupyterHub.cleanup_servers = True
+
+## Users
+c.Authenticator.admin_users = {'{{ user_name }}','{{ my_college_user_name }}'}

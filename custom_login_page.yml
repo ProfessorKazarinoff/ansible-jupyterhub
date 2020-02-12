@@ -8,6 +8,7 @@
   gather_facts: true
   vars_files:
     - vars/host.yml
+    - vars/college.yml
     # domain_name: mydomain.org
 
   tasks:
@@ -29,4 +30,30 @@
         group: sudo
         mode: '0644'
       become: yes
-    
+
+    - name: copy the templates directory into /ect/jpyterhub/template
+      copy:
+        # need to make this a relative path source
+        src: templates/login.html
+        dest: /etc/jupyterhub/templates/login.html
+        owner: root
+        group: sudo
+        mode: '0644'
+      become: yes
+
+# Not working for path reasons?
+#    - name: Template a file to /etc/jupyterhub/jupyterhub_config.py with custom login path
+#      template:
+#        # need to make this a relative path source
+#        src: templates/jupyterhub_config_custom_login.j2
+#        dest: /etc/jupyterhub/jupyterhub_config.py
+#        owner: root
+#        group: "{{ user_name }}"
+#        mode: '0770'
+#      become: yes
+
+#    - name: Restart the jupyterhub systemd service
+#      systemd:
+#        state: restarted
+#        name: jupyterhub
+#      become: yes
