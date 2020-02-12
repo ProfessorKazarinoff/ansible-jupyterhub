@@ -70,6 +70,38 @@ After this is done, log into the server with the name jupyterhub and the passwor
 
 Go through the process of getting a google_oauth_credentials.json file from developers.google.com. I couldn't figure out a way to automate this step. Save the credentials.json file in vault/google_oauth_credentials.json
 
+browse to [https://console.developers.google.com](https://console.developers.google.com)
+
+Select [Credentials] from the left-hand API & Services menu
+
+Click [+CREATE CREDENTIALS]
+
+Choose [OAuth Client ID]
+
+Select [Web Application]
+
+Enter a name for the Jupyterhub project, something like ```jupyterhub-MYCLASS-2020Q1```
+
+[Authorized JavaScript origins]
+```https://mydomain.org```
+
+[ Authorized redirect URIs ]
+```https://mydomain.org/hub/oauth_callback```
+
+[Create]
+
+Copy the Client ID and Client Secret and store in a safe place (no in version control!)
+
+Click the download arrow to the right of the credential that was just created.
+
+Move this file and rename to ```vault/google_oauth_credentails.json```
+
+That should be the google credentails taken care of
+
+Next make sure that ```vars/college.yml``` is filled out. 
+
+
+
 ## Run the next set of Ansible Playbooks
 
 ```text

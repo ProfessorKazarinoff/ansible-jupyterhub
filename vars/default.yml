@@ -18,6 +18,6 @@ sys_packages: ['curl', 'vim', 'git', 'ufw','wget']
 
 # in vars/college.yml
 # make sure to add this to .gitignore
-my_college_domain: mycollege.edu
-my_college_name: My College Name
-my_college_username: first.last
+my_college_domain: pcc.edu
+my_college_name: Portland Community College
+my_college_user_name: peter.kazarinoff

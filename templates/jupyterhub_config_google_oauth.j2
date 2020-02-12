@@ -29,7 +29,7 @@ c.LocalGoogleOAuthenticator.create_system_users = True
 c.Authenticator.add_user_cmd = ['adduser', '-q', '--gecos', '""', '--disabled-password', '--force-badname']
 with open('/etc/jupyterhub/college_id.json') as f:
     college_id = json.load(f)
-c.LocalGoogleOAuthenticator.hosted_domain = college_id['domain']   # replace with mycollege.edu, must be a list of strings
+c.LocalGoogleOAuthenticator.hosted_domain = [college_id['domain']]   # replace with mycollege.edu, must be a list of strings
 c.LocalGoogleOAuthenticator.login_service = college_id['name']  # replace with 'My College Name'
 
 ## Extra Configuration
