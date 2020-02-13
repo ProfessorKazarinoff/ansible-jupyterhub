@@ -1,0 +1,23 @@
+# nbgitpuller_plugin.yml
+# An Ansible playbook to add functionality that
+# allows the use of the nbgitpuller plugin
+# https://jupyterhub.github.io/nbgitpuller/
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    - vars/college.yml
+    # domain_name: mydomain.org
+
+  tasks:
+    - name: conda install nbgitpuller into jupyterhub conda env from the conda-forge channel
+      shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub -c conda-forge nbgitpuller
+      become: yes
+    - name: Restart the jupyterhub systemd service
+      systemd:
+        state: restarted
+        name: jupyterhub
+      become: yes
+## print out a url to use with nbgitpuller to direct students

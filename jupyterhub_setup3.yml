@@ -27,3 +27,4 @@
 - import_playbook: google_oauth.yml
 #- import_playbook: custom_login_page.yml
 #- import_playbook: cull_idle_servers.yml
+#- import_playbook: nbgitpuller_plugin.yml
