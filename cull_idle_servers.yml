@@ -15,6 +15,7 @@
     - name: conda install python-dateutil into jupyterhub conda env from the conda-forge channel
       shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub -c conda-forge python-dateutil
       become: yes
+      
     - name: Template a modified jupyterhub_config.py file to /etc/jupyterhub/jupyterhub_config.py
       template:
         # need to make this a relative path source
@@ -23,14 +24,15 @@
         owner: root
         group: "{{ user_name }}"
         mode: '0770'
-    - name: copy the cull_idle_servers_script into /ect/jpyterhub/cull_idle_servers.py
+
+    - name: copy the cull_idle_servers_script into /etc/jupyterhub/cull_idle_servers.py
       copy:
         # need to make this a relative path source
         src: templates/cull_idle_servers.py
         dest: /etc/jupyterhub/cull_idle_servers.py
         owner: root
         group: sudo
-        mode: '0644'
+        mode: '0770'
       become: yes
 
     - name: Restart the jupyterhub systemd service

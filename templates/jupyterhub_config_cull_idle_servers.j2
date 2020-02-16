@@ -2,6 +2,7 @@
 
 # used to read the json google oauth config file
 import json
+import sys
 
 # For Google OAuth
 from oauthenticator.google import LocalGoogleOAuthenticator   # $ pip install oauthenticator
@@ -52,10 +53,12 @@ c.Authenticator.admin_users = {'{{ user_name }}','{{ my_college_user_name }}'}
 ## Cull Idle Servers
 # https://github.com/jupyterhub/jupyterhub/tree/master/examples/cull-idle
 
+# Cull Idle Servers
+# place cull_idle_servers.py in /etc/jupyterhub
 c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
+        'command': [sys.executable, '/etc/jupyterhub/cull_idle_servers.py', '--timeout=3600'],
     }
 ]

@@ -20,4 +20,8 @@
         state: restarted
         name: jupyterhub
       become: yes
-## print out a url to use with nbgitpuller to direct students
+
+      ## print out a url to use with nbgitpuller to direct students
+    - name: Print out the nbgitpuller url to use
+      debug:
+        msg: "use link \n https://engr101lab.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FProfessorKazarinoff%2FENGR101&urlpath=tree%2FENGR101%2Fcourse_materials \n go to: \n https://jupyterhub.github.io/nbgitpuller/link.html to make a link"

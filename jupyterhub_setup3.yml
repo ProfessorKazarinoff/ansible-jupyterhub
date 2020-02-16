@@ -24,7 +24,7 @@
 ## had to add a user gabby with a password manually and add the user to the config
 ## create_test_users.yml playbook should create a new user called jupyterhub
 ### Should stop here and make sure everything works
-#- import_playbook: google_oauth.yml
+- import_playbook: google_oauth.yml
 - import_playbook: cull_idle_servers.yml
-#- import_playbook: nbgitpuller_plugin.yml
+- import_playbook: nbgitpuller_plugin.yml
 #- import_playbook: custom_login_page.yml
