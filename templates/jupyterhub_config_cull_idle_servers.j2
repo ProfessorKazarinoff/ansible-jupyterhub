@@ -32,9 +32,6 @@ with open('/etc/jupyterhub/college_id.json') as f:
 c.LocalGoogleOAuthenticator.hosted_domain = [college_id['domain']]   # replace with mycollege.edu, must be a list of strings
 c.LocalGoogleOAuthenticator.login_service = college_id['name']  # replace with 'My College Name'
 
-# sets a custom html template at the login screen.
-c.JupyterHub.template_paths = ['/etc/jupyterhub/templates/']
-
 ## Extra Configuration
 
 # Maximum number of concurrent servers that can be active at a time
