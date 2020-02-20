@@ -1,0 +1,48 @@
+# resize_droplet.yml
+# An Ansible playbook to shut down Jupyterhub and
+# re-size the droplet to save money
+# https://jupyterhub.github.io/nbgitpuller/
+---
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    - vars/college.yml
+    # domain_name: mydomain.org
+
+  tasks:
+    - name: Remind user to shut down all active JupyterHub servers
+      pause:
+        prompt: "Shut down all user JupyterHub servers. Type [Enter] when finished"
+    - name: Shut down Jupyterhub
+      systemd:
+        state: stopped
+        name: jupyterhub
+      become: yes
+    - name: Shut down Nginx
+      systemd:
+        state: stopped
+        name: nginx
+      become: yes
+    #- name: Ask user for droplet size
+    #  modulename: something with user input
+    #- name: Resize droplet to user specified size
+    #  modulename: some do module to do this
+    - name: Wait for server to restart
+      pause:
+        minutes: 2
+    - name: Restart Nginx
+      systemd:
+        state: started
+        name: nginx
+      become: yes
+    - name: Restart JupyterHub
+      systemd:
+        state: started
+        name: jupyterhub
+      become: yes    
+      ## print out a url to use with nbgitpuller to direct students
+    - name: Print out user to test out the restarted server
+      debug:
+        msg: "Browse to the JupyterHub server and make sure resize was successful"
