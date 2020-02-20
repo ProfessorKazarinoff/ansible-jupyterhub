@@ -25,13 +25,75 @@
         state: stopped
         name: nginx
       become: yes
+
+   
+- hosts: localhost
+  gather_facts: true
+  vars:
+    do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
+    do_droplet_id: 177856941
+    new_do_droplet_size: s-1vcpu-1gb  # $80 per month: s-6vcpu-16gb
+    # domain_name: mydomain.org
+  tasks:
     #- name: Ask user for droplet size
     #  modulename: something with user input
-    #- name: Resize droplet to user specified size
-    #  modulename: some do module to do this
-    - name: Wait for server to restart
+    - name: Power off the Digitial Ocean Droplet
+      uri:
+        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ do_api_token }}"
+        body:
+          type: power_off
+        body_format: json
+        validate_certs: no
+        return_content: yes
+        follow_redirects: yes
+      register: restdata_off
+    - name: Resize the Droplet
+      uri:
+        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ do_api_token }}"
+        body:
+          type: resize
+          disk: false
+          size: "{{ new_do_droplet_size }}"
+        body_format: json
+        validate_certs: no
+        return_content: yes
+        follow_redirects: yes
+      register: restdata_resize
+    - name: Power on the DigitalOcean Droplet
+      uri:
+        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ do_api_token }}"
+        body:
+          type: power_on
+        body_format: json
+        validate_certs: no
+        return_content: yes
+        follow_redirects: yes
+      register: restdata_on
+    - name: Wait for server to restart, minute per GB. Typical server size is 5GB so wait 6 minutes
       pause:
-        minutes: 2
+        minutes: 6
+
+
+- hosts: jh_servers
+  remote_user: root
+  gather_facts: true
+  vars_files:
+    - vars/host.yml
+    - vars/college.yml
+    # domain_name: mydomain.org
+  tasks:        
     - name: Restart Nginx
       systemd:
         state: started
