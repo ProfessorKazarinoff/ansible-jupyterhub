@@ -3,108 +3,129 @@
 # re-size the droplet to save money
 # https://jupyterhub.github.io/nbgitpuller/
 ---
-- hosts: jh_servers
-  remote_user: root
-  gather_facts: true
-  vars_files:
-    - vars/host.yml
-    - vars/college.yml
-    # domain_name: mydomain.org
+#- hosts: jh_servers
+#  remote_user: root
+#  gather_facts: true
+#  vars_files:
+#    - vars/host.yml
+#    - vars/college.yml
+#    # domain_name: mydomain.org
 
-  tasks:
-    - name: Remind user to shut down all active JupyterHub servers
-      pause:
-        prompt: "Shut down all user JupyterHub servers. Type [Enter] when finished"
-    - name: Shut down Jupyterhub
-      systemd:
-        state: stopped
-        name: jupyterhub
-      become: yes
-    - name: Shut down Nginx
-      systemd:
-        state: stopped
-        name: nginx
-      become: yes
+#  tasks:
+#    - name: Remind user to shut down all active JupyterHub servers
+#      pause:
+#        prompt: "Shut down all user JupyterHub servers. Type [Enter] when finished"
+#    - name: Shut down Jupyterhub
+#      systemd:
+#        state: stopped
+#        name: jupyterhub
+#      become: yes
+#    - name: Shut down Nginx
+#      systemd:
+#        state: stopped
+#        name: nginx
+#      become: yes
 
    
 - hosts: localhost
   gather_facts: true
   vars:
     do_api_token: "{{ lookup('file','~/.do/do_api_token') }}"
-    do_droplet_id: 177856941
+    do_droplet_id: XXXXXXXXXXXX
     new_do_droplet_size: s-1vcpu-1gb  # $80 per month: s-6vcpu-16gb
     # domain_name: mydomain.org
   tasks:
-    #- name: Ask user for droplet size
-    #  modulename: something with user input
-    - name: Power off the Digitial Ocean Droplet
+    #- name: Run shell command to make a curl request to turn on droplet
+    #  shell: curl --request POST --url https://api.digitalocean.com/v2/droplets/XXXXXXXXXXXXX/actions --header 'authorization: Bearer XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' --header 'content-type: application/json' --data '{"type": "power_on"}'
+    - name: Try URI post request to turn droplet on
       uri:
-        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+        url: https://api.digitalocean.com/v2/droplets/XXXXXXXXXXXXXXXXXXX/actions
         method: POST
         headers:
+          Authorization: "Bearer XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
           Content-Type: "application/json"
-          Authorization: "Bearer {{ do_api_token }}"
-        body:
-          type: power_off
         body_format: json
-        validate_certs: no
-        return_content: yes
-        follow_redirects: yes
-      register: restdata_off
-    - name: Resize the Droplet
-      uri:
-        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
-        method: POST
-        headers:
-          Content-Type: "application/json"
-          Authorization: "Bearer {{ do_api_token }}"
-        body:
-          type: resize
-          disk: false
-          size: "{{ new_do_droplet_size }}"
-        body_format: json
-        validate_certs: no
-        return_content: yes
-        follow_redirects: yes
-      register: restdata_resize
-    - name: Power on the DigitalOcean Droplet
-      uri:
-        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
-        method: POST
-        headers:
-          Content-Type: "application/json"
-          Authorization: "Bearer {{ do_api_token }}"
         body:
           type: power_on
-        body_format: json
-        validate_certs: no
-        return_content: yes
-        follow_redirects: yes
-      register: restdata_on
-    - name: Wait for server to restart, minute per GB. Typical server size is 5GB so wait 6 minutes
-      pause:
-        minutes: 6
+
+    #- name: Ask user for droplet size
+    #  modulename: something with user input
+#    - name: Power off the Digitial Ocean Droplet
+#      uri:
+#        url: "https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions"
+#        method: POST
+#        headers:
+#          Content-Type: "application/json"
+#          Authorization: "Bearer {{ do_api_token }}"
+#        body:
+#          type: power_off
+#        body_format: json
+#        #validate_certs: no
+#        return_content: yes
+#        follow_redirects: yes
+#      register: restdata_off
+#    - name: Resize the Droplet
+#      uri:
+#        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+#        method: POST
+#        headers:
+#          Content-Type: "application/json"
+#          Authorization: "Bearer {{ do_api_token }}"
+#        body:
+#          type: resize
+#          disk: false
+#          size: "{{ new_do_droplet_size }}"
+#        body_format: json
+#        validate_certs: no
+#        return_content: yes
+#        follow_redirects: yes
+#      register: restdata_resize
+## want to replicate curl --request POST \
+#  --url https://api.digitalocean.com/v2/droplets/XXXXXXXXXXXXXXX/actions \
+#  --header 'authorization: Bearer XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
+#  --header 'content-type: application/json' \
+#  --cookie __cfduid=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \
+#  --data '{
+#  "type": "power_on",
+#}'
+#    - name: Power on the DigitalOcean Droplet
+#      uri:
+#        url: https://api.digitalocean.com/v2/droplets/{{ do_droplet_id }}/actions
+#        method: POST
+#        headers:
+#          authorization: Bearer XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#          content-type: application/json
+#       body:
+#          type: power_on
+#        body_format: json
+#        validate_certs: no
+#        return_content: yes
+#        follow_redirects: yes
+#      register: restdata_on
+#    - name: Wait for server to restart, minute per GB. Typical server size is 5GB so wait 6 minutes
+#      pause:
+#        minutes: 6
 
 
-- hosts: jh_servers
-  remote_user: root
-  gather_facts: true
-  vars_files:
-    - vars/host.yml
-    - vars/college.yml
-    # domain_name: mydomain.org
-  tasks:        
-    - name: Restart Nginx
-      systemd:
-        state: started
-        name: nginx
-      become: yes
-    - name: Restart JupyterHub
-      systemd:
-        state: started
-        name: jupyterhub
-      become: yes    
-      ## print out a url to use with nbgitpuller to direct students
-    - name: Print out user to test out the restarted server
-      debug:
-        msg: "Browse to the JupyterHub server and make sure resize was successful"
+#- hosts: jh_servers
+#  remote_user: root
+#  gather_facts: true
+#  vars_files:
+#    - vars/host.yml
+#    - vars/college.yml
+#    # domain_name: mydomain.org
+#  tasks:        
+#   - name: Restart Nginx
+#      systemd:
+#        state: started
+#        name: nginx
+#      become: yes
+#    - name: Restart JupyterHub
+#      systemd:
+#        state: started
+#        name: jupyterhub
+#      become: yes    
+#      ## print out a url to use with nbgitpuller to direct students
+#    - name: Print out user to test out the restarted server
+#      debug:
+#        msg: "Browse to the JupyterHub server and make sure resize was successful"
