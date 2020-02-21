@@ -111,3 +111,19 @@ ansible-playbook jupyterhub_setup3.yml
 ## Yeah! Now jupyterhub should be set up.
 
 Sure there is work left to be done to build out the Ansible playbooks in a more logical way. They could be broken into roles and better organized. That will have to be the next deployment.
+
+## To increase or decrease server size
+
+Log into JupyterHub and shut down any running servers. Open ```resize_droplet.yml``` and in the ```hosts: localhost``` section, change: 
+
+```text
+new_do_droplet_size: s-1vcpu-1gb
+```
+
+to the desired size. Then run the playbook.
+
+```text
+ansible-playbook resize_droplet.yml -i hosts
+```
+
+The playbook will take 6 minutes to complete. After the playbook completes, log back into JupyterHub and check that everything is working.
