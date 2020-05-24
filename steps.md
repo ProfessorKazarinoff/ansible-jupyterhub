@@ -44,7 +44,7 @@ Run the test playbooks to make sure the Digital Ocean oauth token works.
 ansible-playbook jupyterhub_setup0.yml
 ```
 
-All of the variables you saved should be printed out and the location of the Digital Ocean Oauth Key should be shown.
+All of the variables you saved should be printed out and the location of the Digital Ocean OAuth Key should be shown.
 
 ## Fill in variables in vars/local.yml and vars/host.yml
 
