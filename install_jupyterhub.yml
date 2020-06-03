@@ -22,7 +22,7 @@
       shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub numpy matplotlib pandas jupyter xlrd sympy
 
     - name: Install JupyterHub and JupyterLab
-      shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub -c conda-forge jupyterhub jupyterlab
+      shell: /opt/miniconda3/bin/conda install -y --prefix /opt/miniconda3/envs/jupyterhub -c conda-forge jupyterhub jupyterlab oauthenticator
 
     - name: jupyterhub env - read permission for all
       file:
